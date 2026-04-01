@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Tea - She's That Girl</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
+body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* ===== MOBILE (default — full phone screen, screenshot-ready) ===== */
+.card{width:100%;max-width:100vw;min-height:100vh;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.card-bg{position:absolute;inset:0;z-index:0;transition:opacity .5s}
+.card-overlay{position:absolute;inset:0;z-index:1}
+.card-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;padding:2.5rem 1.5rem 1.5rem;justify-content:center}
+.card-emoji{text-align:center;font-size:2.8rem;margin-bottom:.2rem}
+.card-subtitle{text-align:center;font-size:.6rem;letter-spacing:3px;color:#ffd700;font-weight:800;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{text-align:center;font-size:1.5rem;font-weight:800;color:#ffd700;margin-bottom:1.2rem}
+.tea-row{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.1);border-radius:12px;padding:.7rem .9rem;margin-bottom:.55rem}
+.tea-label{font-size:.55rem;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
+.tea-text{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.92);line-height:1.4}
+.tea-meta{font-size:.65rem;color:rgba(255,255,255,.35);margin-top:.15rem}
+.chaos-section{text-align:center;margin:.8rem 0 .3rem;flex-shrink:0}
+.chaos-label{font-size:.5rem;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;font-weight:700}
+.chaos-meter{font-size:1.3rem;margin:.25rem 0}
+.chaos-verdict{font-size:.68rem;color:#ffd700;font-weight:700}
+.hashtags{text-align:center;font-size:.6rem;color:rgba(255,215,0,.25);margin-top:.35rem}
+.watermark{text-align:center;font-size:.48rem;color:rgba(255,255,255,.08);margin-top:.6rem;letter-spacing:1px}
+.delta-row{background:rgba(90,138,212,.06);border:1px solid rgba(90,138,212,.12);border-radius:12px;padding:.6rem .9rem;margin-bottom:.55rem}
+.delta-row.up{border-color:rgba(93,170,122,.2);background:rgba(93,170,122,.06)}
+.delta-row.down{border-color:rgba(212,106,106,.15);background:rgba(212,106,106,.05)}
+.delta-icon{font-size:.8rem;margin-right:.3rem}
+.phase-menstrual{border-left:3px solid rgba(212,106,106,.4)}
+.phase-follicular{border-left:3px solid rgba(93,170,122,.4)}
+.phase-ovulatory{border-left:3px solid rgba(255,215,0,.4)}
+.phase-luteal{border-left:3px solid rgba(212,114,140,.4)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:2rem}
+.empty-emoji{font-size:3rem;margin-bottom:.5rem;opacity:.3}
+.empty-title{font-size:1rem;font-weight:700;color:rgba(255,255,255,.25);margin-bottom:.3rem}
+.empty-desc{font-size:.75rem;color:rgba(255,255,255,.15);line-height:1.5;max-width:260px}
+
+/* Share — single button + long-press image */
+.share-bar{display:flex;gap:10px;justify-content:center;margin-top:1rem;padding:.5rem 0}
+.share-btn{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:#ffd700;font-size:.75rem;font-weight:700;padding:.6rem 1.4rem;border-radius:12px;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;gap:6px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.share-btn:active{transform:scale(.95);background:rgba(255,215,0,.2)}
+.share-btn.spill{border-color:rgba(212,114,140,.3);color:#D4728C;background:rgba(212,114,140,.08)}
+.share-btn.spill:active{background:rgba(212,114,140,.15)}
+.share-status{text-align:center;font-size:.55rem;color:rgba(255,215,0,.4);margin-top:.4rem;min-height:1.2em}
+.share-hint{text-align:center;font-size:.5rem;color:rgba(255,215,0,.15);margin-top:auto;padding-top:.5rem;letter-spacing:.5px}
+.fallback-img{width:100%;border-radius:12px;margin-top:.5rem;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+/* Copycat watermark — visible on unauthorized domains */
+.drm-wm{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);pointer-events:none}
+.drm-wm span{color:rgba(255,0,0,.6);font-size:2rem;font-weight:900;transform:rotate(-30deg);letter-spacing:4px;text-transform:uppercase}
+
+/* ===== DESKTOP ===== */
+@media(min-width:768px){
+  body.desktop-mode{background:#0a0a0a;overflow:hidden}
+  body.desktop-mode .card{max-width:100vw;min-height:100vh;border-radius:0;margin:0}
+  body.desktop-mode .card-content{max-width:680px;margin:0 auto;padding:3rem 2.5rem;justify-content:center}
+  body.desktop-mode .card-emoji{font-size:4rem;margin-bottom:.4rem}
+  body.desktop-mode .card-subtitle{font-size:.75rem;letter-spacing:5px;margin-bottom:.25rem}
+  body.desktop-mode .card-title{font-size:2.2rem;margin-bottom:1.8rem}
+  body.desktop-mode .tea-row{padding:1rem 1.3rem;margin-bottom:.7rem;border-radius:14px;backdrop-filter:blur(8px);background:rgba(255,215,0,.03)}
+  body.desktop-mode .tea-label{font-size:.65rem;letter-spacing:2px;margin-bottom:.3rem}
+  body.desktop-mode .tea-text{font-size:1.2rem;line-height:1.5}
+  body.desktop-mode .tea-meta{font-size:.75rem;margin-top:.2rem}
+  body.desktop-mode .delta-row{padding:.9rem 1.3rem;margin-bottom:.7rem;border-radius:14px;backdrop-filter:blur(8px)}
+  body.desktop-mode .delta-icon{font-size:1rem}
+  body.desktop-mode .chaos-section{margin:1.2rem 0 .5rem}
+  body.desktop-mode .chaos-label{font-size:.6rem;letter-spacing:3px}
+  body.desktop-mode .chaos-meter{font-size:1.8rem;margin:.3rem 0}
+  body.desktop-mode .chaos-verdict{font-size:.85rem}
+  body.desktop-mode .hashtags{font-size:.7rem;margin-top:.5rem}
+  body.desktop-mode .watermark{font-size:.55rem;margin-top:.8rem}
+  body.desktop-mode .phase-menstrual{border-left:4px solid rgba(212,106,106,.5)}
+  body.desktop-mode .phase-follicular{border-left:4px solid rgba(93,170,122,.5)}
+  body.desktop-mode .phase-ovulatory{border-left:4px solid rgba(255,215,0,.5)}
+  body.desktop-mode .phase-luteal{border-left:4px solid rgba(212,114,140,.5)}
+  body.desktop-mode .share-hint{font-size:.6rem}
+}
+
+/* ===== EMBED ===== */
+body.embed-mode{background:transparent;min-height:auto;padding:0;overflow:visible}
+body.embed-mode .card{min-height:auto;max-width:380px;margin:0 auto;border-radius:20px;height:auto;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+body.embed-mode .card-content{padding:1.2rem 1rem 1rem;justify-content:flex-start}
+body.embed-mode .card-emoji{font-size:1.8rem;margin-bottom:.1rem}
+body.embed-mode .card-subtitle{font-size:.45rem;letter-spacing:2px;margin-bottom:.1rem}
+body.embed-mode .card-title{font-size:1rem;margin-bottom:.8rem}
+body.embed-mode .tea-row{padding:.4rem .6rem;margin-bottom:.35rem}
+body.embed-mode .tea-label{font-size:.42rem}
+body.embed-mode .tea-text{font-size:.72rem}
+body.embed-mode .tea-meta{font-size:.5rem}
+body.embed-mode .delta-row{padding:.35rem .6rem;margin-bottom:.35rem}
+body.embed-mode .chaos-section{margin:.5rem 0 .3rem}
+body.embed-mode .chaos-label{font-size:.4rem}
+body.embed-mode .chaos-meter{font-size:.9rem}
+body.embed-mode .chaos-verdict{font-size:.52rem}
+body.embed-mode .hashtags{font-size:.45rem;padding-top:.3rem}
+body.embed-mode .watermark{font-size:.38rem;margin-top:.3rem;padding-bottom:.3rem}
+body.embed-mode .share-hint{display:none}
+
+/* CHAOS BACKGROUNDS */
+.chaos-1{background:linear-gradient(160deg,#1C1520 0%,#2a1f2e 40%,#1C1520 100%)}
+.chaos-2{background:linear-gradient(135deg,#1C1520 0%,rgba(235,186,196,.25) 25%,#1C1520 50%,rgba(212,114,140,.15) 80%,#1C1520 100%)}
+.chaos-3{background:linear-gradient(160deg,#1C1520 0%,rgba(212,114,140,.35) 25%,rgba(235,186,196,.2) 50%,rgba(212,114,140,.15) 75%,#1C1520 100%)}
+.chaos-4{background:radial-gradient(ellipse at 25% 50%,rgba(212,114,140,.5) 0%,rgba(235,186,196,.2) 25%,#1C1520 60%),radial-gradient(circle at 75% 70%,rgba(255,215,0,.08),transparent 40%)}
+.chaos-5{background:conic-gradient(from 200deg at 40% 50%,#1C1520,rgba(212,114,140,.6),rgba(255,215,0,.15),rgba(235,186,196,.4),#1C1520,rgba(212,114,140,.3),#1C1520)}
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="card-bg" id="cardBg"></div>
+  <div class="card-overlay" id="cardOverlay"></div>
+  <div class="card-content" id="cardContent"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// LAYER 1: ANTI-COPY — disable right-click, keyboard shortcuts, drag
+// ═══════════════════════════════════════════════════════
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+  // Block Ctrl+U, Ctrl+S, Ctrl+Shift+I, Ctrl+Shift+J, F12
+  if ((e.ctrlKey && (e.key === 'u' || e.key === 's')) ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+      e.key === 'F12') {
+    e.preventDefault();
+  }
+});
+document.addEventListener('copy', function(e) { e.preventDefault(); });
+document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+// ═══════════════════════════════════════════════════════
+// LAYER 2: DOMAIN LOCK — wrong domain = degraded + watermark after 14 days
+// ═══════════════════════════════════════════════════════
+(function() {
+  var _h = window.location.hostname;
+  var _a = ['janmilansantos.github.io', 'localhost', '127.0.0.1', ''];
+  var _ok = false;
+  for (var i = 0; i < _a.length; i++) { if (_h === _a[i] || _h.indexOf(_a[i]) !== -1) _ok = true; }
+  if (!_ok) {
+    // Check if domain has been unauthorized for 14+ days (grace period)
+    var _k = '_stg_fc';
+    var _fc = localStorage.getItem(_k);
+    if (!_fc) { localStorage.setItem(_k, Date.now()); _fc = Date.now(); }
+    var _days = (Date.now() - parseInt(_fc)) / 86400000;
+    if (_days > 14) {
+      // Degradation: desaturate + visible watermark
+      document.documentElement.style.filter = 'saturate(0.2) brightness(0.6)';
+      var _wm = document.createElement('div');
+      _wm.className = 'drm-wm';
+      _wm.innerHTML = '<span>UNLICENSED COPY</span>';
+      document.body.appendChild(_wm);
+    }
+    // Beacon: report unauthorized domain (no personal data, just domain)
+    try {
+      var _img = new Image();
+      _img.src = 'https://janmilansantos.github.io/stg-tea-card/beacon.gif?d=' + encodeURIComponent(_h) + '&t=' + Date.now();
+    } catch(e) {}
+  }
+})();
+
+// ═══════════════════════════════════════════════════════
+// LAYER 3: INVISIBLE WATERMARKS — survive copy-paste, prove theft for DMCA
+// Zero-width chars + sub-pixel CSS values encode "STG-NARU" ownership
+// ═══════════════════════════════════════════════════════
+(function() {
+  // Zero-width character watermark (invisible in source view)
+  var zw = '\u200B\u200C\u200D\u2060\u200B\u200C\u200D\u2060'; // encodes "STG"
+  var wm = document.createElement('div');
+  wm.setAttribute('aria-hidden', 'true');
+  wm.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;padding:0.003rem';
+  wm.textContent = zw;
+  wm.className = 'stg-n4ru-a8f2'; // honeypot: unique class searchable via Google
+  document.body.appendChild(wm);
+  // Sub-pixel CSS watermark in card spacing
+  var card = document.getElementById('card');
+  if (card) card.style.paddingBottom = '0.003rem'; // 0.003 = ownership marker
+})();
+
+// ═══════════════════════════════════════════════════════
+// CARD RENDERING
+// ═══════════════════════════════════════════════════════
+var P = new URLSearchParams(window.location.search);
+var isEmbed = (window !== window.top) || (P.get('embed') === '1');
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+var isDesktop = !isMobile && !isEmbed;
+
+if (isEmbed) document.body.classList.add('embed-mode');
+else if (isDesktop) document.body.classList.add('desktop-mode');
+
+var chaos = parseInt(P.get('chaos')) || 0;
+var mood = parseFloat(P.get('mood')) || 0;
+var habits = parseFloat(P.get('habits')) || 0;
+var delta = parseFloat(P.get('delta')) || 0;
+var phase = P.get('phase') || '';
+var persona = P.get('persona') || 'ShesThatGirl';
+var teaMood = decodeURIComponent(P.get('tea_mood') || '');
+var teaPhase = decodeURIComponent(P.get('tea_phase') || '');
+var teaHabits = decodeURIComponent(P.get('tea_habits') || '');
+var mode = P.get('mode') || 'standard';
+var teaSpicy = decodeURIComponent(P.get('tea_spicy') || '');
+var connectionCount = parseInt(P.get('connections')) || 0;
+var chapter = P.get('chapter') || '';
+
+var SPICY = {
+  committed: {
+    high: ["you and your person are statistically inseparable this month \ud83d\ude0d\ud83d\ude18\ud83c\udf36\ufe0f","your person can't keep up with your follicular energy \ud83c\udf52\ud83d\ude08\ud83c\udf36\ufe0f","mood after connection: 5/5 every single time. your person is doing something right \ud83e\udd70\ud83e\udd75\ud83d\udd25","ovulatory phase + your person + connection spike = science \ud83d\udca6\ud83d\udd2c\ud83e\udd75","the numbers don't lie and neither does your Thursday pattern together \ud83e\udd75\ud83c\udf46\ud83d\udc40","peak connection day: ovulatory. your person already knew \ud83e\udee6\ud83c\udf51\ud83d\udd25"],
+    medium: ["quality moments with your person this month \ud83c\udf52\ud83d\ude09\ud83e\udd70","your connection pattern together has a favourite phase \ud83c\udf38\ud83d\ude08\ud83d\udc40","mid-month peak detected with your person. noted. \ud83d\udca6\ud83e\udee6\ud83d\ude18","your mood spikes the day after you're together. just saying. \ud83e\udd70\ud83d\udca6\ud83d\ude0f","the chapter is giving consistent energy. your person approves \ud83d\udd25\ud83e\udd70\ud83d\ude18","quality over quantity with your person. taste. \ud83e\udee6\ud83d\ude09\ud83d\udc85"],
+    low: ["quiet month together. sometimes presence is enough \ud83e\udd70\ud83e\udeb7\ud83d\ude18","your person is giving you space and the data respects it \ud83c\udf38\ud83d\ude09","recharging together. not every chapter needs fireworks \ud83e\udd7a\ud83c\udf52\ud83d\ude18","the slow burn is real and your data shows it \ud83e\udee6\ud83d\udc40\ud83c\udf36\ufe0f","low frequency, high quality. your person gets it \ud83d\ude0f\ud83e\udd70\u2728","resting season with your person. the comeback will be worth it \ud83d\ude08\ud83c\udf51\ud83d\udca6"]
+  },
+  casual: {
+    high: ["connection energy this month is... unregulated \ud83c\udf51\ud83d\udd25\ud83d\ude0f","the roster is active and the data is blushing \ud83e\udee6\ud83d\udca6\ud83d\ude0d","connection frequency: UP. across the board. coincidence? \ud83c\udf46\ud83d\udcc8\ud83d\ude0f","your cycle predicted your spiciest week and it was RIGHT \ud83d\ude08\ud83c\udf46\ud83d\udc40","peak connection day: ovulatory. we could have guessed \ud83e\udee6\ud83c\udf51\ud83d\udd25","your data says Thursdays hit different \ud83c\udf51\ud83d\udc45\ud83d\udca6"],
+    medium: ["a few moments worth remembering this month \ud83c\udf52\ud83d\ude09\ud83d\ude0f","connection moments correlate with your mood highs \ud83e\udd75\ud83d\udcca\ud83d\ude0d","the data sees a pattern on weekends \ud83d\udc40\ud83c\udf51\ud83d\udd25","casual chapter but the frequency says otherwise \ud83d\ude0f\ud83e\udee6\ud83c\udf36\ufe0f","mid-month peak detected. noted. \ud83d\udca6\ud83e\udee6","connection energy: present but selective. taste. \ud83e\udee6\ud83d\ude09\ud83d\udc85"],
+    low: ["casual chapter, quiet month. the data isn't judging \ud83e\udeb7\ud83d\ude09","the talking stage is talking... slowly \ud83c\udf52\ud83d\ude0f\ud83d\udc40","selective energy. not everyone gets your time \ud83e\udee6\ud83d\udc85\ud83e\udd70","saving your energy for when someone earns it \ud83c\udf51\u2728\ud83d\ude0f","low connection, high standards. as it should be \ud83d\ude08\ud83c\udf52\ud83d\ude18","the universe is curating your options. patience \ud83c\udf36\ufe0f\ud83d\udc40\ud83e\udeb7"]
+  },
+  solo: {
+    high: ["solo and thriving. self-love frequency is OFF the charts \ud83c\udf51\ud83d\udd25\ud83d\udc85","self-care sessions logged: your relationship with yourself is elite \ud83e\udee6\ud83d\ude0d\ud83e\udd70","solo chapter, peak energy. you're your own favourite person \ud83c\udf52\ud83d\ude08\u2728","ovulatory phase + solo + mood 5 = main character activities \ud83d\udca6\ud83e\udd75\ud83d\ude0f","connection with yourself: UP. everything else: irrelevant \ud83c\udf46\ud83d\udcc8\ud83d\udc85","the data says you don't need anyone right now and it's correct \ud83e\udee6\ud83d\udd25\ud83e\udd70"],
+    medium: ["solo chapter, steady self-care. self-love era \ud83c\udf52\ud83d\ude09\ud83d\udc85","quality time with yourself this month \ud83e\udee6\u2728\ud83e\udd70","your connection pattern is: yourself, on your terms \ud83c\udf38\ud83d\ude08\ud83d\ude18","solo self-care sessions: valid, tracked, and thriving \ud83c\udf51\ud83d\udc85\ud83d\ude18","mid-month you treated yourself. the data saw it \ud83d\udca6\ud83d\ude0f\ud83e\udd70","your mood spikes on self-care days. noted. \ud83e\udee6\ud83d\ude09\ud83d\udd25"],
+    low: ["quiet month. the data respects your boundaries \ud83e\udeb7\ud83e\udd7a\ud83d\ude18","hermit era: active. recharging the whole damn battery \ud83c\udf38\ud83d\ude08\ud83d\udd0b","solo chapter energy. self-love is still love \ud83c\udf52\ud83d\udc85\ud83e\udd70","the connection log is empty but the journal isn't \u2728\ud83e\udd7a\ud83d\ude09","sometimes the most intimate thing is rest \ud83e\udee6\ud83d\udecb\ufe0f\ud83e\udd70","saving all that energy for yourself \ud83c\udf51\u2728\ud83d\ude0f"]
+  }
+};
+
+var bgEl = document.getElementById('cardBg');
+if (chaos >= 1 && chaos <= 5) bgEl.className = 'card-bg chaos-' + chaos;
+else { bgEl.className = 'card-bg chaos-3'; chaos = chaos || 3; }
+
+var baseOpacity = isDesktop ? {1:.88,2:.82,3:.76,4:.68,5:.58} : {1:.92,2:.88,3:.84,4:.78,5:.7};
+var ov = document.getElementById('cardOverlay');
+var spillOrTea = (mode === 'spill' || mode === 'spill-free') ? 'spill' : 'tea';
+var op = baseOpacity[chaos] || .84;
+var spiceLevel = connectionCount >= 8 ? 5 : connectionCount >= 6 ? 4 : connectionCount >= 3 ? 3 : connectionCount >= 1 ? 2 : 1;
+if (spillOrTea === 'spill') {
+  var spiceOp = isDesktop ? {1:.88,2:.82,3:.76,4:.66,5:.55} : {1:.90,2:.85,3:.80,4:.72,5:.62};
+  var sop = spiceOp[spiceLevel] || .80;
+  ov.style.background = 'linear-gradient(180deg,rgba(28,16,24,' + (sop - .15) + ') 0%,rgba(28,16,24,' + sop + ') 40%,rgba(28,16,24,' + (sop + .02) + ') 100%)';
+} else {
+  ov.style.background = 'linear-gradient(180deg,rgba(28,21,32,' + (op - .18) + ') 0%,rgba(28,21,32,' + op + ') 40%,rgba(28,21,32,' + (op + .02) + ') 100%)';
+}
+
+var chaosEmoji = {1:'\ud83e\udeb7',2:'\ud83c\udf38\ud83c\udf38',3:'\u2615\u2615\u2615',4:'\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83d\udd25',5:'\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83e\udee0'};
+var chaosVerdict = {1:'calm queen energy',2:'controlled chaos',3:'the vibes are shifting',4:'unhinged but accurate',5:'full feral mode activated'};
+var phaseClass = phase ? 'phase-' + phase.toLowerCase() : '';
+var phaseSeason = {Menstrual:'Winter',Follicular:'Spring',Ovulatory:'Summer',Luteal:'Autumn'};
+var deltaClass = delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : '';
+var deltaIcon = delta > 0.5 ? '\ud83d\udcc8' : delta < -0.5 ? '\ud83d\udcc9' : '\ud83d\udcca';
+var deltaText = delta > 0.5 ? 'mood UP ' + Math.abs(delta).toFixed(1) + ' from last week. the comeback is writing itself.'
+  : delta < -0.5 ? 'mood DOWN ' + Math.abs(delta).toFixed(1) + ' from last week. we don\'t talk about last week.'
+  : 'mood held steady. the plot is holding.';
+
+var content = document.getElementById('cardContent');
+var isSpill = mode === 'spill' || mode === 'spill-free';
+var isSpillFree = mode === 'spill-free';
+var isTea = !isSpill;
+var spiceMeter = {1:'\ud83e\udd7a\ud83e\udeb7',2:'\ud83d\ude09\ud83c\udf52\ud83d\ude18',3:'\ud83e\udee6\ud83d\ude0f\ud83c\udf36\ufe0f\ud83d\udc40',4:'\ud83c\udf51\ud83d\udd25\ud83d\ude08\ud83e\udd75',5:'\ud83d\udca6\ud83c\udf46\ud83d\udd25\ud83e\udee6\ud83e\udd75\ud83d\ude08'};
+var spiceVerdict = {1:'angelic energy \ud83d\ude07',2:'casually curious \ud83d\ude0f',3:'the tension is building \ud83d\udc40',4:'someone call the fire department \ud83c\udf36\ufe0f',5:'your data needs a cold shower \ud83d\udca6'};
+
+var hasData = isSpill ? (connectionCount > 0 || chapter) : (teaMood || mood);
+if (!hasData) {
+  var emptyEmoji = isSpill ? '\ud83e\udee6' : '\u2615';
+  var emptyTitle = isSpill ? 'Nothing to spill... yet.' : 'No tea to spill... yet.';
+  content.innerHTML = '<div class="empty"><div class="empty-emoji">' + emptyEmoji + '</div><div class="empty-title">' + emptyTitle + '</div><div class="empty-desc">Add URL parameters to see your card.</div></div>';
+} else {
+  var html = '';
+  if (isSpill) {
+    html += '<div class="card-emoji">\ud83e\udee6</div>';
+    html += '<div class="card-subtitle" style="color:#D4728C">for your eyes only</div>';
+    html += '<div class="card-title" style="color:#D4728C">The Spill</div>';
+  } else {
+    html += '<div class="card-emoji">\u2615</div>';
+    html += '<div class="card-subtitle">your data has opinions</div>';
+    html += '<div class="card-title">The Tea</div>';
+  }
+
+  if (isTea) {
+    if (teaMood) { html += '<div class="tea-row"><div class="tea-label">Mood</div><div class="tea-text">' + escHtml(teaMood) + '</div>'; if (mood) html += '<div class="tea-meta">mood avg: ' + mood.toFixed(1) + ' this week</div>'; html += '</div>'; }
+    if (teaPhase && phase) { html += '<div class="tea-row ' + phaseClass + '"><div class="tea-label">Cycle &middot; ' + escHtml(phaseSeason[phase] || phase) + '</div><div class="tea-text">' + escHtml(teaPhase) + '</div><div class="tea-meta">phase: ' + escHtml(phase) + '</div></div>'; }
+    if (teaHabits) { html += '<div class="tea-row"><div class="tea-label">Habits</div><div class="tea-text">' + escHtml(teaHabits) + '</div>'; if (habits) html += '<div class="tea-meta">habit avg: ' + habits.toFixed(1) + ' this week</div>'; html += '</div>'; }
+    html += '<div class="delta-row ' + deltaClass + '"><div class="tea-label">Plot Twist</div><div class="tea-text"><span class="delta-icon">' + deltaIcon + '</span>' + escHtml(deltaText) + '</div></div>';
+    html += '<div class="chaos-section"><div class="chaos-label">chaos level</div><div class="chaos-meter">' + (chaosEmoji[chaos] || '\u2615\u2615\u2615') + '</div><div class="chaos-verdict">' + (chaosVerdict[chaos] || 'calculating...') + '</div><div class="hashtags">#ShesThatGirl #TheReceipts #' + escHtml(persona) + '</div></div>';
+  }
+
+  if (isSpill) {
+    var spicyTier = connectionCount >= 6 ? 'high' : connectionCount >= 2 ? 'medium' : 'low';
+    var spicyChapter = (chapter === 'committed' || chapter === 'casual' || chapter === 'solo') ? chapter : 'solo';
+    var spicyPool = SPICY[spicyChapter][spicyTier];
+    var spicyText = teaSpicy || spicyPool[Math.floor(new Date().getMinutes() % spicyPool.length)];
+    html += '<div class="tea-row" style="border-color:rgba(212,114,140,.25);background:rgba(212,114,140,.04)"><div class="tea-label" style="color:rgba(212,114,140,.5)">Connection ' + (chapter ? '&middot; ' + escHtml(chapter) : '') + '</div><div class="tea-text">' + escHtml(spicyText) + '</div>';
+    if (connectionCount) html += '<div class="tea-meta">' + connectionCount + ' moments this month</div>';
+    html += '</div>';
+    if (phase) {
+      var phaseSpill = {Menstrual:'resting season. the body knows. \ud83e\udeb7\ud83e\udd7a',Follicular:'energy rising. the build-up begins. \ud83c\udf38\ud83d\ude0f\ud83d\udd25',Ovulatory:'peak energy. everything is heightened. \ud83e\udd75\ud83e\udee6\ud83d\udc40',Luteal:'nesting mode. selective energy. \ud83c\udf51\ud83d\ude08'};
+      html += '<div class="tea-row ' + phaseClass + '"><div class="tea-label" style="color:rgba(212,114,140,.4)">Cycle &middot; ' + escHtml(phaseSeason[phase] || phase) + '</div><div class="tea-text">' + (phaseSpill[phase] || '') + '</div></div>';
+    }
+    html += '<div class="chaos-section"><div class="chaos-label" style="color:rgba(212,114,140,.4)">spice level</div><div class="chaos-meter">' + (spiceMeter[spiceLevel] || '\ud83e\udee6\ud83e\udee6\ud83e\udee6') + '</div><div class="chaos-verdict" style="color:#D4728C">' + (spiceVerdict[spiceLevel] || '') + '</div>';
+    html += '<div class="hashtags" style="color:rgba(212,114,140,.2)">#ShesThatGirl #TheSpill' + (isSpillFree ? '' : ' #' + escHtml(persona)) + '</div></div>';
+  }
+
+  html += '<div class="watermark">SHE\'S THAT GIRL &middot; ' + (isSpill ? 'THE SPILL' : 'THE TEA') + '</div>';
+
+  if (isMobile) html += '<div class="share-hint">share your tea</div>';
+  else if (isDesktop) html += '<div class="share-hint">open on your phone for the perfect screenshot</div>';
+
+  content.innerHTML = html;
+}
+
+function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ═══════════════════════════════════════════════════════
+// SHARE — single button (mobile) + long-press fallback
+// ═══════════════════════════════════════════════════════
+if (hasData) {
+  var btnClass = isSpill ? 'share-btn spill' : 'share-btn';
+  var shareHtml = '<div class="share-bar">';
+  shareHtml += '<button class="' + btnClass + '" id="btnShare">Share</button>';
+  shareHtml += '</div>';
+  shareHtml += '<div class="share-status" id="shareStatus"></div>';
+  shareHtml += '<div id="fallbackContainer"></div>';
+  content.insertAdjacentHTML('beforeend', shareHtml);
+}
+</script>
+
+<!-- html-to-image -->
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+
+<script>
+(function() {
+  var card = document.getElementById('card');
+  var status = document.getElementById('shareStatus');
+  var btnShare = document.getElementById('btnShare');
+  var fallbackContainer = document.getElementById('fallbackContainer');
+  if (!card || !btnShare) return;
+
+  var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  function setStatus(msg) {
+    if (status) { status.textContent = msg; setTimeout(function(){ status.textContent = ''; }, 4000); }
+  }
+
+  function captureCard() {
+    setStatus('Rendering...');
+    var hide = ['.share-bar', '.share-status', '.share-hint', '#fallbackContainer'];
+    hide.forEach(function(s) { var el = document.querySelector(s); if (el) el.style.display = 'none'; });
+    return htmlToImage.toBlob(card, {
+      pixelRatio: 3, backgroundColor: '#0a0a0a',
+      width: card.scrollWidth, height: card.scrollHeight,
+      style: { borderRadius: '0' }
+    }).finally(function() {
+      hide.forEach(function(s) { var el = document.querySelector(s); if (el) el.style.display = ''; });
+    });
+  }
+
+  function showFallbackImage(blob) {
+    if (!fallbackContainer) return;
+    var url = URL.createObjectURL(blob);
+    fallbackContainer.innerHTML =
+      '<img src="' + url + '" class="fallback-img" alt="Tea Card">' +
+      '<div style="text-align:center;font-size:.45rem;color:rgba(255,255,255,.15);margin-top:.25rem">Long-press image to save</div>';
+  }
+
+  btnShare.addEventListener('click', function() {
+    captureCard().then(function(blob) {
+      var file = new File([blob], 'the-tea-card.png', { type: 'image/png' });
+
+      // navigator.share with files — iOS: files only (title/text breaks it)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        return navigator.share({ files: [file] }).then(function() {
+          setStatus('Shared!');
+        });
+      }
+
+      // Fallback: share URL only
+      if (navigator.share) {
+        return navigator.share({ url: window.location.href }).then(function() {
+          setStatus('Link shared!');
+        });
+      }
+
+      // No share API: show long-press image
+      showFallbackImage(blob);
+      setStatus('Long-press the image to save');
+    }).catch(function(err) {
+      if (err.name === 'AbortError') return;
+      // Share failed: show long-press fallback
+      captureCard().then(showFallbackImage);
+      setStatus('Long-press the image to save');
+    });
+  });
+})();
+</script>
+</body>
+</html>
