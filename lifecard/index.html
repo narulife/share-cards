@@ -76,8 +76,18 @@ var _ms={Great:10,Happy:9,Good:8,Meh:6,Tired:5,Annoyed:4,Sad:3,Crying:2,Crazy:5,
 var _me={Great:'\uD83E\uDD29',Happy:'\uD83D\uDE04',Good:'\uD83D\uDE42',Meh:'\uD83D\uDE10',Tired:'\uD83D\uDE11',Annoyed:'\uD83D\uDE12',Sad:'\u2639\uFE0F',Crying:'\uD83D\uDE22',Crazy:'\uD83E\uDD2A',Needy:'\uD83E\uDD7A'};
 var _ns={Focused:10,Calm:9,Creative:8,Motivated:9,Anxious:4,Tired:5,Spicy:6,Scattered:3,Numb:2};
 
-// Word of the day pools by energy tier
-var _w={5:['radiance','alignment','power','unstoppable','golden','iconic','divine','luminous','ascended','legendary'],4:['momentum','glow','spark','bloom','rising','unfolding','thriving','awakening','magnetic','brilliant'],3:['steady','present','becoming','shifting','evolving','finding','building','grounding','emerging','seeking'],2:['gentle','patience','softness','rest','surrender','grace','stillness','breathing','healing','letting go'],1:['shelter','silence','cocoon','reset','tenderness','solitude','quiet','release','hibernation','sanctuary']};
+// Word of the day — correlated to mood + mental + spending
+// 3 axes: energy (mood+mental), flow (mental type), spend tier
+// Energy: 1-5 from mood+mental scores
+// Flow: sharp(Focused/Motivated), zen(Calm/Creative), edge(Anxious/Spicy), fog(Tired/Scattered/Numb)
+// Spend: low(0-99), mid(100-499), high(500+)
+var _flow={Focused:'sharp',Motivated:'sharp',Calm:'zen',Creative:'zen',Anxious:'edge',Spicy:'edge',Tired:'fog',Scattered:'fog',Numb:'fog'};
+var _wotd={
+  sharp:{low:['discipline','intention','clarity','precision','strategy','purpose','control','execution','vision','mastery'],mid:['balance','investment','calculated','resourceful','efficient','deliberate','smart','practical','grounded','structured'],high:['abundance','overflow','generosity','prosperity','reward','luxury','indulgence','celebration','opulence','splurge queen']},
+  zen:{low:['stillness','peace','simplicity','contentment','gratitude','calm','serenity','acceptance','presence','harmony'],mid:['flow','ease','gentle bloom','nurture','warmth','softness','comfort','kindness','ritual','self-love'],high:['treating herself','pampered','self-care era','softness first','roses & rest','blooming','luxe calm','silk energy','gentle luxury','she deserves']},
+  edge:{low:['restraint','tension','patience','holding back','simmering','anticipation','edge','watchful','alert','coiled spring'],mid:['release','impulse','thrill','risk','daring','bold move','spark','friction','adrenaline','on the line'],high:['unhinged spending','retail therapy','chaos purchase','treat or threat','dangerous cart','damage done','no regrets','main character haul','swipe era','wallet said bye']},
+  fog:{low:['rest','cocoon','shelter','hibernation','conserve','quiet','inward','recharge','pause','breathe'],mid:['drifting','floating','somewhere','in between','liminal','foggy comfort','soft blur','autopilot','haze','just existing'],high:['emotional spending','comfort buy','filling the void','band-aid haul','spending feelings','numb cart','coping mechanism','retail blanket','spending through it','money is fake anyway']}
+};
 
 var P=new URLSearchParams(location.search);
 var mood=P.get('mood');
@@ -120,10 +130,13 @@ if(!mood||!mental||!_$[mood]||!_$[mood][mental]){
   var eEmoji={1:'\uD83E\uDEB7',2:'\uD83C\uDF19\uD83C\uDF19',3:'\u2728\u2728\u2728',4:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25',5:'\uD83D\uDD25\u2728\uD83D\uDCAB\uD83D\uDD25\u2728'};
   var eVerdict={1:'resting era',2:'gentle energy',3:'the vibes are present',4:'she\'s activated',5:'main character moment'};
 
-  // Word of the day — rotate by day of year + combo hash
+  // Word of the day — correlated to mood + mental + spending
+  var spend=parseInt(P.get('spend'))||0;
+  var spendTier=spend>=500?'high':spend>=100?'mid':'low';
+  var flow=_flow[mental]||'zen';
   var doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
   var hash=0;for(var i=0;i<mood.length;i++)hash+=mood.charCodeAt(i);for(var i=0;i<mental.length;i++)hash+=mental.charCodeAt(i);
-  var pool=_w[energy]||_w[3];
+  var pool=(_wotd[flow]&&_wotd[flow][spendTier])||_wotd.zen.low;
   var wotd=pool[(doy+hash)%pool.length];
 
   var h='';
