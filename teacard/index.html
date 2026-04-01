@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Tea - Student OS Beta</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
+body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card{width:100%;max-width:100vw;min-height:100vh;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.card-bg{position:absolute;inset:0;z-index:0;background:#1C1520}
+.card-overlay{position:absolute;inset:0;z-index:1}
+.card-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;padding:2.5rem 1.5rem 1.5rem;justify-content:center}
+.card-emoji{text-align:center;font-size:2.8rem;margin-bottom:.2rem}
+.card-subtitle{text-align:center;font-size:.6rem;letter-spacing:3px;color:#ffd700;font-weight:800;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{text-align:center;font-size:1.4rem;font-weight:800;color:#ffd700;margin-bottom:1.2rem;line-height:1.3}
+.tea-row{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.1);border-radius:12px;padding:.7rem .9rem;margin-bottom:.55rem}
+.tea-label{font-size:.55rem;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
+.tea-text{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.92);line-height:1.4}
+.tea-meta{font-size:.65rem;color:rgba(255,255,255,.35);margin-top:.15rem}
+.verdict-row{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.18);border-radius:12px;padding:.8rem .9rem;margin-bottom:.55rem;text-align:center}
+.verdict-label{font-size:.45rem;letter-spacing:2px;color:rgba(255,215,0,.5);text-transform:uppercase;font-weight:700;margin-bottom:.3rem}
+.verdict-text{font-size:1rem;font-weight:700;color:#ffd700;line-height:1.4;font-style:italic}
+.chaos-section{text-align:center;margin:.8rem 0 .3rem;flex-shrink:0}
+.chaos-label{font-size:.5rem;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;font-weight:700}
+.chaos-meter{font-size:1.3rem;margin:.25rem 0}
+.chaos-verdict{font-size:.68rem;color:#ffd700;font-weight:700}
+.hashtags{text-align:center;font-size:.6rem;color:rgba(255,215,0,.2);margin-top:.35rem}
+.watermark{text-align:center;font-size:.48rem;color:rgba(255,255,255,.08);margin-top:.6rem;letter-spacing:1px}
+.share-bar{display:flex;gap:10px;justify-content:center;margin-top:1rem;padding:.5rem 0}
+.share-btn{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:#ffd700;font-size:.75rem;font-weight:700;padding:.6rem 1.4rem;border-radius:12px;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;gap:6px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.share-btn:active{transform:scale(.95);background:rgba(255,215,0,.2)}
+.share-status{text-align:center;font-size:.55rem;color:rgba(255,215,0,.4);margin-top:.4rem;min-height:1.2em}
+.share-hint{text-align:center;font-size:.5rem;color:rgba(255,215,0,.12);margin-top:auto;padding-top:.5rem;letter-spacing:.5px}
+.fallback-img{width:100%;border-radius:12px;margin-top:.5rem;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:2rem}
+.empty-emoji{font-size:3rem;margin-bottom:.8rem;opacity:.4}
+.empty-title{font-size:1.1rem;font-weight:700;color:rgba(255,215,0,.6);margin-bottom:.5rem}
+.empty-desc{font-size:.75rem;color:rgba(255,255,255,.2);line-height:1.6;max-width:260px}
+.drm-wm{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);pointer-events:none}
+.drm-wm span{color:rgba(255,0,0,.6);font-size:2rem;font-weight:900;transform:rotate(-30deg);letter-spacing:4px;text-transform:uppercase}
+@media(min-width:768px){
+  body{background:#0a0a0a;overflow:hidden}
+  .card{max-width:100vw;min-height:100vh}
+  .card-content{max-width:680px;margin:0 auto;padding:3rem 2.5rem;justify-content:center}
+  .card-emoji{font-size:4rem;margin-bottom:.4rem}
+  .card-subtitle{font-size:.75rem;letter-spacing:5px;margin-bottom:.25rem}
+  .card-title{font-size:2rem;margin-bottom:1.8rem}
+  .tea-row{padding:1rem 1.3rem;margin-bottom:.7rem;border-radius:14px}
+  .tea-label{font-size:.65rem;letter-spacing:2px;margin-bottom:.3rem}
+  .tea-text{font-size:1.15rem;line-height:1.5}
+  .tea-meta{font-size:.75rem}
+  .verdict-row{padding:1rem 1.3rem;border-radius:14px}
+  .verdict-text{font-size:1.2rem}
+  .chaos-meter{font-size:1.8rem}
+  .share-hint{font-size:.6rem}
+}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="card-bg" id="cardBg"></div>
+  <div class="card-overlay" id="cardOverlay"></div>
+  <div class="card-content" id="cardContent"></div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('keydown',function(e){if((e.ctrlKey&&(e.key==='u'||e.key==='s'))||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||e.key==='F12')e.preventDefault();});
+document.addEventListener('copy',function(e){e.preventDefault();});
+(function(){var h=location.hostname;var a=['narulife.github.io','janmilansantos.github.io','localhost','127.0.0.1',''];var ok=false;for(var i=0;i<a.length;i++)if(h===a[i]||h.indexOf(a[i])!==-1)ok=true;if(!ok){var k='_stg_fc';var f=localStorage.getItem(k);if(!f){localStorage.setItem(k,Date.now());f=Date.now();}if((Date.now()-parseInt(f))/864e5>14){document.documentElement.style.filter='saturate(0.2) brightness(0.6)';var w=document.createElement('div');w.className='drm-wm';w.innerHTML='<span>UNLICENSED COPY</span>';document.body.appendChild(w);}}})();
+
+var _t=JSON.parse(atob('eyJ0aXRsZXMiOnsicmFkaWFudCI6eyJzaGFycCI6WyJTdXNwaWNpb3VzbHkgUHV0IFRvZ2V0aGVyIiwic2hlIHdva2UgdXAgYW5kIGNob3NlIGNvbXBldGVuY2UgYW5kIHRoYXRzIGFsYXJtaW5nIl0sInplbiI6WyJNYWluIENoYXJhY3RlciBKb3VybmFsaW5nIiwic2hlIGpvdXJuYWxlZCB0aGlzIG1vcm5pbmcgYW5kIG5vdyB0aGlua3Mgc2hlcyBoZWFsZWQiXSwiZWRnZSI6WyJIYXBweSBidXQgQW54aWV0eSBMb2FkaW5nIiwidGhlIHNtaWxlIGlzIHJlYWwgYnV0IHRoZSBicmFpbiBpcyBydW5uaW5nIDQ3IHRhYnMiXSwiZm9nIjpbIlZpYmluZyBidXQgTm9ib2R5cyBIb21lIiwidGhlIHZpYmVzIGFyZSBwcmVzZW50IGJ1dCB0aGUgcGlsb3QgbGVmdCB0aGUgYnVpbGRpbmciXX0sInN0ZWFkeSI6eyJzaGFycCI6WyJRdWlldGx5IFBsb3R0aW5nIiwic2hlIGxvb2tzIGNhbG0gYnV0IHRoZSBub3RlcyBhcHAgaXMgRlVMTCJdLCJ6ZW4iOlsiVW5ib3RoZXJlZCBvciBpbiBEZW5pYWwiLCJlaXRoZXIgZW1vdGlvbmFsbHkgZXZvbHZlZCBvciBqdXN0IGRpc3NvY2lhdGluZyBncmFjZWZ1bGx5Il0sImVkZ2UiOlsiTG9va3MgRmluZSAoU2hlIElzIE5vdCkiLCJ0aGUgZ3JvdXAgY2hhdCBrbm93cyB0aGUgcmVhbCBzdG9yeSJdLCJmb2ciOlsiQXV0b3BpbG90IE1vZGUgRW5nYWdlZCIsImdvaW5nIHRocm91Z2ggbW90aW9ucyBhbmQgY2FsbGluZyBpdCByb3V0aW5lIl19LCJtdXRlZCI6eyJzaGFycCI6WyJCb2R5IFByZXNlbnQgSGVhcnQgb24gTGVhdmUiLCJkb2luZyB0aGUgd29yayBidXQgdGhlIHNvdWwgY2xvY2tlZCBvdXQgYXQgbHVuY2giXSwiemVuIjpbIkNhbGxpbmcgSXQgUGVhY2UgKEl0cyBFeGhhdXN0aW9uKSIsInplbiBpcyBqdXN0IGJlaW5nIHRvbyB0aXJlZCB0byBzcGlyYWwiXSwiZWRnZSI6WyJPbmUgSW5jb252ZW5pZW5jZSBmcm9tIFZpbGxhaW4gQXJjIiwidGhlIHBhdGllbmNlIGlzIGF0IDIlIGFuZCBmYWxsaW5nIl0sImZvZyI6WyJTY3JlZW4gVGltZSBSZXBvcnQ6IERldmFzdGF0aW5nIiwiYnJhaW46IG9mZmxpbmUuIHBob25lOiBvdmVydGltZS4iXX0sInN0b3JteSI6eyJzaGFycCI6WyJQb3dlcmVkIGJ5IFB1cmUgU3BpdGUiLCJwcm9kdWN0aXZlIGJ1dCBpbiBhIGNvbmNlcm5pbmcgd2F5Il0sInplbiI6WyJDcnlpbmcgaW4gTG93ZXJjYXNlIiwidGhlIHNhZG5lc3MgaXMgb3JnYW5pemVkIGFuZCB0aGF0cyBzb21laG93IHdvcnNlIl0sImVkZ2UiOlsiVW5oaW5nZWQgVEVEIFRhbGsgRW5lcmd5Iiwic2hlIGhhcyBvcGluaW9ucyBhbmQgemVybyBmaWx0ZXIgdG9kYXkiXSwiZm9nIjpbIkVtb3Rpb25hbDogRnVsbC4gQnJhaW46IEVtcHR5LiIsImFsbCB0aGUgZmVlbGluZ3MsIG5vbmUgb2YgdGhlIHRob3VnaHRzIl19LCJ3aWxkIjp7InNoYXJwIjpbIkNoYW90aWMgYW5kIE9yZ2FuaXplZCBBYm91dCBJdCIsInNoZSBoYXMgYSBzcHJlYWRzaGVldCBmb3IgdGhlIGNoYW9zIGFuZCB0aGF0cyB0ZXJyaWZ5aW5nIl0sInplbiI6WyJBdCBQZWFjZSBCZWluZyBFdmVyeW9uZXMgUHJvYmxlbSIsInVuYm90aGVyZWQgYnkgaGVyIG93biBhdWRhY2l0eSJdLCJlZGdlIjpbIldhbGtpbmcgUmVkIEZsYWcsIEdyZWF0IFRhc3RlIiwic2hlIGtub3dzIGV4YWN0bHkgd2hhdCBzaGVzIGRvaW5nIGFuZCBkb2VzbnQgY2FyZSJdLCJmb2ciOlsiQnJhaW4gTGVmdCwgQm9keSBTdGlsbCBQb3N0aW5nIiwidGhlIHRob3VnaHRzIGhhdmUgbm8gR1BTIGJ1dCB0aGUgZmluZ2VycyBrZWVwIHR5cGluZyJdfX0sInJlY2VpcHRzIjp7IkZvb2QiOnsibG93IjoiYmFyZWx5IGZlZCB0b2RheSBhbmQgY2FsbGluZyBpdCBpbnRlcm1pdHRlbnQgZmFzdGluZyIsIm1pZCI6InRoZSBmb29kIHNwZW5kaW5nIHNheXMgc2hlIGRlc2VydmVzIHRoaXMgZXZlcnkgc2luZ2xlIG1lYWwiLCJoaWdoIjoiZWF0aW5nIGhlciBmZWVsaW5ncyBhbmQgdGhlIGZvb2QgY291cnQgaXMgaGVyIHRoZXJhcGlzdCJ9LCJHYXMvVHJhbnNwbyI6eyJsb3ciOiJzdGF5ZWQgaG9tZSBhbmQgY2FsbGVkIGl0IHNlbGYtY2FyZSIsIm1pZCI6InJ1bm5pbmcgYXJvdW5kIHRoaXMgY2l0eSBsaWtlIGl0IG93ZXMgaGVyIG1vbmV5IiwiaGlnaCI6InRoZSBnYXMgc3RhdGlvbiBpcyBoZXIgbW9zdCB2aXNpdGVkIGxvY2F0aW9uIHRoaXMgd2VlayJ9LCJEcmlua3MiOnsibG93IjoiaHlkcmF0ZWQgb24gYSBidWRnZXQuIGp1c3Qgd2F0ZXIgYW5kIGRlbHVzaW9uLiIsIm1pZCI6InRoZSBjb2ZmZWUgc2hvcCBrbm93cyBoZXIgbmFtZSwgaGVyIG9yZGVyLCBhbmQgaGVyIGVtb3Rpb25hbCBzdGF0ZSIsImhpZ2giOiJjYWZmZWluZSBzcGVuZGluZyA+IHJlbnQgYXQgdGhpcyBwb2ludCJ9LCJTaG9wcGluZyI6eyJsb3ciOiJ0aGUgY2FydCBpcyBlbXB0eSBhbmQgaGVyIHNlbGYtY29udHJvbCBpcyBzdXNwaWNpb3VzIiwibWlkIjoiYWRkIHRvIGNhcnQgZW5lcmd5IGlzIG1vZGVyYXRlIGJ1dCB0aGUgd2lzaGxpc3QgaXMgU0NSRUFNSU5HIiwiaGlnaCI6InJldGFpbCB0aGVyYXB5IGlzIGhlciBsb3ZlIGxhbmd1YWdlIGFuZCB0aGUgYmFuayBpcyBjcnlpbmcifSwiUGFyY2VsIjp7ImxvdyI6Im5vIHBhY2thZ2VzIHRvZGF5LiB0aGUgZGVsaXZlcnkgYXBwIGlzIGNvbmNlcm5lZC4iLCJtaWQiOiJ0cmFja2luZyBudW1iZXJzIGFyZSBiZWNvbWluZyBhIHBlcnNvbmFsaXR5IHRyYWl0IiwiaGlnaCI6InNoZSBoYXMgbW9yZSBwYWNrYWdlcyBjb21pbmcgdGhhbiBwbGFucyBmb3IgdGhlIGZ1dHVyZSJ9LCJTZWxmLUNhcmUiOnsibG93Ijoic2VsZi1jYXJlIHRvZGF5IHdhcyBleGlzdGluZy4gdGhhdHMgaXQuIHRoYXRzIHRoZSBjYXJlLiIsIm1pZCI6InRyZWF0aW5nIGhlcnNlbGYgYmVjYXVzZSBzaGUgZWFybmVkIGl0LiBzaGUgYWx3YXlzIGVhcm5zIGl0LiIsImhpZ2giOiJ0aGUgc2VsZi1jYXJlIGJ1ZGdldCBzYWlkOiBpbSB0aGUgbWFpbiBjaGFyYWN0ZXIgb2YgdGhpcyB3YWxsZXQifSwiT3RoZXJzIjp7ImxvdyI6Im1pc2NlbGxhbmVvdXMgc3BlbmRpbmc6IHplcm8uIHNoZSBpcyBlaXRoZXIgYnJva2Ugb3IgZGlzY2lwbGluZWQuIiwibWlkIjoicmFuZG9tIHB1cmNoYXNlcyBzaGUgd2lsbCBqdXN0aWZ5IGFzIG5lY2Vzc2FyeSBpbiAzLi4uIDIuLi4gMS4uLiIsImhpZ2giOiJ0aGUgXCJvdGhlcnNcIiBjYXRlZ29yeSBpcyBjYXJyeWluZyB0aGlzIGVudGlyZSBidWRnZXQgb24gaXRzIGJhY2sifSwiU2F2aW5ncyI6eyJsb3ciOiJzYXZpbmcgbm90aGluZyB0b2RheS4gdG9tb3Jyb3ctaGVyIGNhbiBkZWFsIHdpdGggaXQuIiwibWlkIjoicHV0IHNvbWUgYXdheS4gZnV0dXJlIGhlciB3aWxsIHJlbWVtYmVyIHRoaXMgZm9uZGx5LiIsImhpZ2giOiJzYXZpbmcgbW9uZXkgbGlrZSBzaGUgaGFzIGEgcGxhbiBhbmQgaG9uZXN0bHk/IGljb25pYy4ifSwibm9uZSI6eyJsb3ciOiJ6ZXJvIHNwZW50IHRvZGF5LiBlaXRoZXIgYnJva2Ugb3IgZW5saWdodGVuZWQuIiwibWlkIjoiemVybyBzcGVudCB0b2RheS4gZWl0aGVyIGJyb2tlIG9yIGVubGlnaHRlbmVkLiIsImhpZ2giOiJ6ZXJvIHNwZW50IHRvZGF5LiBlaXRoZXIgYnJva2Ugb3IgZW5saWdodGVuZWQuIn19LCJ2ZXJkaWN0cyI6eyJoaWdoX2hpZ2giOiJ0aHJpdmluZyBBTkQgc3BlbmRpbmcgbGlrZSBzaGVzIGltbW9ydGFsLiB0aGUgYXVkYWNpdHkuIiwiaGlnaF9taWQiOiJ0aGUgZW5lcmd5IGlzIHVwIGFuZCB0aGUgd2FsbGV0IGlzIGtlZXBpbmcgcGFjZS4iLCJoaWdoX2xvdyI6ImFsbCB0aGF0IGVuZXJneSBhbmQgbm9uZSBvZiBpdCB3ZW50IHRvIHRoZSBjYXJ0LiBkaXNjaXBsaW5lIG9yIGRlbmlhbD8iLCJtaWRfaGlnaCI6Im1vZGVyYXRlIHZpYmVzLCBoZWF2eSBzcGVuZGluZy4gdGhlIGVtb3Rpb25hbCBtYXRoIGlzbnQgbWF0aGluZy4iLCJtaWRfbWlkIjoiZXZlcnl0aGluZyBpcyBtaWQgYW5kIHRoYXRzIGhvbmVzdGx5IGEgdmliZS4iLCJtaWRfbG93IjoiY29uc2VydmluZyBlbmVyZ3kgQU5EIG1vbmV5LiBxdWlldCBlcmEuIiwibG93X2hpZ2giOiJ0aGUgd2FsbGV0IGlzIGNyeWluZyBoYXJkZXIgdGhhbiBzaGUgaXMuIiwibG93X21pZCI6ImxvdyBlbmVyZ3kgc3BlbmRpbmcuIGNvbWZvcnQgcHVyY2hhc2VzIGRldGVjdGVkLiIsImxvd19sb3ciOiJzYXZpbmcgbW9uZXkgYW5kIGVuZXJneS4gcmVzcGVjdCBvciBjcnkgZm9yIGhlbHA/In19'));
+
+// Mood → tier
+var _mt={Great:'radiant',Happy:'radiant',Good:'steady',Meh:'muted',Tired:'muted',Annoyed:'stormy',Sad:'stormy',Crying:'stormy',Crazy:'wild',Needy:'wild'};
+// Mental → flow
+var _mf={Focused:'sharp',Motivated:'sharp',Calm:'zen',Creative:'zen',Anxious:'edge',Spicy:'edge',Tired:'fog',Scattered:'fog',Numb:'fog'};
+// Mood scores
+var _ms={Great:10,Happy:9,Good:8,Meh:6,Tired:5,Annoyed:4,Sad:3,Crying:2,Crazy:5,Needy:4};
+var _ns={Focused:10,Calm:9,Creative:8,Motivated:9,Anxious:4,Tired:5,Spicy:6,Scattered:3,Numb:2};
+var _me={Great:'\uD83E\uDD29',Happy:'\uD83D\uDE04',Good:'\uD83D\uDE42',Meh:'\uD83D\uDE10',Tired:'\uD83D\uDE11',Annoyed:'\uD83D\uDE12',Sad:'\u2639\uFE0F',Crying:'\uD83D\uDE22',Crazy:'\uD83E\uDD2A',Needy:'\uD83E\uDD7A'};
+
+var P=new URLSearchParams(location.search);
+var mood=P.get('mood');
+var mental=P.get('mental');
+var spend=parseInt(P.get('spend'))||0;
+var topCat=P.get('top_cat')||'none';
+
+// Case-insensitive mood lookup
+if(mood){var mk=Object.keys(_mt);for(var i=0;i<mk.length;i++)if(mk[i].toLowerCase()===mood.toLowerCase()){mood=mk[i];break;}}
+if(mental){var nk=Object.keys(_mf);for(var i=0;i<nk.length;i++)if(nk[i].toLowerCase()===mental.toLowerCase()){mental=nk[i];break;}}
+
+var content=document.getElementById('cardContent');
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+if(!mood||!mental||!_mt[mood]||!_mf[mental]){
+  document.getElementById('cardOverlay').style.background='linear-gradient(180deg,rgba(28,21,32,.8) 0%,rgba(28,21,32,.95) 100%)';
+  content.innerHTML='<div class="empty"><div class="empty-emoji">\u2615</div><div class="empty-title">Use Your Beta Tracker</div><div class="empty-desc">The Tea is brewed from your mood, mental state, and spending data.<br><br>Open your Student OS sheet and log your day first.</div></div>';
+}else{
+  var tier=_mt[mood];var flow=_mf[mental];
+  var ms=_ms[mood]||5;var ns=_ns[mental]||5;
+  var energy=Math.round((ms+ns)/4);if(energy<1)energy=1;if(energy>5)energy=5;
+  var spendTier=spend>=500?'high':spend>=100?'mid':'low';
+  var energyTier=energy>=4?'high':energy>=3?'mid':'low';
+  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||window.innerWidth<768;
+
+  // Get roast data
+  var title=_t.titles[tier]&&_t.titles[tier][flow];
+  if(!title)title=['Your Data Has Opinions','and none of them are polite'];
+  var receipt=_t.receipts[topCat]&&_t.receipts[topCat][spendTier];
+  if(!receipt)receipt=_t.receipts.none[spendTier]||'the data is looking at you funny.';
+  var verdict=_t.verdicts[energyTier+'_'+spendTier]||'the data has no comment. suspicious.';
+
+  // Dynamic gradient seeded from all 3 axes
+  var seed=0;for(var i=0;i<mood.length;i++)seed=seed*31+mood.charCodeAt(i);for(var i=0;i<mental.length;i++)seed=seed*37+mental.charCodeAt(i);seed+=spend*13;seed=Math.abs(seed);
+  var ang=(seed%360);var ang2=((seed*7)%360);
+  var hues=[[255,215,0],[212,170,60],[200,180,80],[180,160,100],[255,200,50],[220,190,70]];
+  var h1=hues[seed%hues.length];var h2=hues[(seed*3+1)%hues.length];
+  var intensity=energy*.06;var i2=energy*.035;
+  var pos1=(seed%30)+20;var pos2=((seed*5)%30)+55;
+  var radX=(seed%60)+20;var radY=((seed*3)%60)+20;
+  var bgEl=document.getElementById('cardBg');
+  if(energy>=4){bgEl.style.background='radial-gradient(ellipse at '+radX+'% '+radY+'%,rgba('+h1+','+intensity+'),transparent 50%),radial-gradient(circle at '+(100-radX)+'% '+(100-radY)+'%,rgba('+h2+','+i2+'),transparent 40%),linear-gradient('+ang+'deg,#1C1520,rgba('+h1+','+(intensity*.6)+') '+pos1+'%,#1C1520 '+pos2+'%,rgba('+h2+','+(i2*.5)+') '+(pos2+20)+'%,#1C1520)';}
+  else if(energy>=3){bgEl.style.background='linear-gradient('+ang+'deg,#1C1520,rgba('+h1+','+intensity+') '+pos1+'%,rgba('+h2+','+i2+') '+pos2+'%,#1C1520)';}
+  else{bgEl.style.background='linear-gradient('+ang+'deg,#1C1520 0%,rgba('+h1+','+(intensity*.5)+') '+pos1+'%,#1C1520 100%)';}
+  var op=isMobile?[0,.92,.88,.84,.78,.70]:[0,.88,.82,.76,.68,.58];
+  document.getElementById('cardOverlay').style.background='linear-gradient('+ang2+'deg,rgba(28,21,32,'+(op[energy]-.18)+') 0%,rgba(28,21,32,'+op[energy]+') 40%,rgba(28,21,32,'+(op[energy]+.02)+') 100%)';
+
+  // Chaos from energy + spend combined
+  var chaos=Math.min(5,Math.max(1,Math.round((energy+spend/200))));
+  var cEmoji={1:'\uD83E\uDEB7',2:'\u2615\u2615',3:'\u2615\u2615\u2615',4:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25',5:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83E\uDEE0'};
+  var cVerdict={1:'calm tea',2:'lukewarm brew',3:'the tea is served',4:'scalding hot tea',5:'the tea is on FIRE'};
+
+  var h='';
+  h+='<div class="card-emoji">\u2615</div>';
+  h+='<div class="card-subtitle">student os beta \u00B7 the tea</div>';
+  h+='<div class="card-title">'+esc(title[0])+'</div>';
+
+  // THE STATE
+  h+='<div class="tea-row"><div class="tea-label">The State</div>';
+  h+='<div class="tea-text">'+esc(title[1])+'</div>';
+  h+='<div class="tea-meta">'+(_me[mood]||'')+' '+esc(mood)+' \u00B7 '+esc(mental)+'</div></div>';
+
+  // THE RECEIPTS
+  h+='<div class="tea-row"><div class="tea-label">The Receipts'+(topCat!=='none'?' \u00B7 '+esc(topCat):'')+'</div>';
+  h+='<div class="tea-text">'+esc(receipt)+'</div>';
+  h+='<div class="tea-meta">\u20B1'+spend+' spent today</div></div>';
+
+  // THE VERDICT
+  h+='<div class="verdict-row"><div class="verdict-label">The Verdict</div>';
+  h+='<div class="verdict-text">'+esc(verdict)+'</div></div>';
+
+  // Chaos
+  h+='<div class="chaos-section"><div class="chaos-label">tea temperature</div>';
+  h+='<div class="chaos-meter">'+(cEmoji[chaos]||'\u2615\u2615\u2615')+'</div>';
+  h+='<div class="chaos-verdict">'+(cVerdict[chaos]||'')+'</div>';
+  h+='<div class="hashtags">#StudentOS #TheTea #'+esc(mood)+esc(mental)+'</div></div>';
+
+  h+='<div class="watermark">STUDENT OS BETA &middot; THE TEA</div>';
+  h+='<div class="share-bar"><button class="share-btn" id="btnShare">Share</button></div>';
+  h+='<div class="share-status" id="shareStatus"></div>';
+  h+='<div id="fallbackContainer"></div>';
+  if(isMobile)h+='<div class="share-hint">spill the tea</div>';
+  else h+='<div class="share-hint">use directly on your phone</div>';
+  content.innerHTML=h;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+(function(){var card=document.getElementById('card'),btn=document.getElementById('btnShare'),st=document.getElementById('shareStatus'),fb=document.getElementById('fallbackContainer');if(!card||!btn)return;function ss(m){if(st){st.textContent=m;setTimeout(function(){st.textContent='';},4000);}}function cap(){ss('Rendering...');var h=['.share-bar','.share-status','.share-hint','#fallbackContainer'];h.forEach(function(s){var e=document.querySelector(s);if(e)e.style.display='none';});return htmlToImage.toBlob(card,{pixelRatio:3,backgroundColor:'#0a0a0a',width:card.scrollWidth,height:card.scrollHeight,style:{borderRadius:'0'}}).finally(function(){h.forEach(function(s){var e=document.querySelector(s);if(e)e.style.display='';});});}btn.addEventListener('click',function(){cap().then(function(b){var f=new File([b],'the-tea.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f]}).then(function(){ss('Tea spilled!');});if(navigator.share)return navigator.share({url:location.href}).then(function(){ss('Link shared!');});var u=URL.createObjectURL(b);fb.innerHTML='<img src="'+u+'" class="fallback-img"><div style="text-align:center;font-size:.4rem;color:rgba(255,255,255,.1);margin-top:.2rem">Long-press to save</div>';ss('Long-press the image to save');}).catch(function(e){if(e.name==='AbortError')return;cap().then(function(b){fb.innerHTML='<img src="'+URL.createObjectURL(b)+'" class="fallback-img">';ss('Long-press to save');});});});})();
+</script>
+</body>
+</html>
