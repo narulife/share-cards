@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>XP Card - Student OS Beta</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
+body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card{width:100%;max-width:100vw;min-height:100vh;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.card-bg{position:absolute;inset:0;z-index:0}
+.card-overlay{position:absolute;inset:0;z-index:1}
+.card-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;padding:2.5rem 1.5rem 1.5rem;justify-content:center}
+.card-emoji{text-align:center;font-size:2.8rem;margin-bottom:.2rem}
+.card-subtitle{text-align:center;font-size:.6rem;letter-spacing:3px;color:#B388FF;font-weight:800;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{text-align:center;font-size:1.5rem;font-weight:800;color:#B388FF;margin-bottom:.3rem;line-height:1.3}
+.card-rank{text-align:center;font-size:.7rem;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:1.2rem}
+.tea-row{background:rgba(179,136,255,.04);border:1px solid rgba(179,136,255,.1);border-radius:12px;padding:.7rem .9rem;margin-bottom:.55rem}
+.tea-label{font-size:.55rem;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
+.tea-text{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.92);line-height:1.4}
+.tea-meta{font-size:.65rem;color:rgba(255,255,255,.35);margin-top:.15rem}
+.xp-bar{width:100%;height:6px;background:rgba(179,136,255,.1);border-radius:3px;margin-top:.4rem;overflow:hidden}
+.xp-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#B388FF,#7C4DFF);transition:width .5s}
+.wotd-row{background:rgba(179,136,255,.08);border:1px solid rgba(179,136,255,.18);border-radius:12px;padding:.7rem .9rem;margin-bottom:.55rem;text-align:center}
+.wotd-label{font-size:.45rem;letter-spacing:2px;color:rgba(179,136,255,.5);text-transform:uppercase;font-weight:700;margin-bottom:.3rem}
+.wotd-word{font-size:1.4rem;font-weight:800;color:#B388FF;letter-spacing:1px;text-transform:lowercase}
+.chaos-section{text-align:center;margin:.8rem 0 .3rem;flex-shrink:0}
+.chaos-label{font-size:.5rem;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;font-weight:700}
+.chaos-meter{font-size:1.3rem;margin:.25rem 0}
+.chaos-verdict{font-size:.68rem;color:#B388FF;font-weight:700}
+.hashtags{text-align:center;font-size:.6rem;color:rgba(179,136,255,.2);margin-top:.35rem}
+.watermark{text-align:center;font-size:.48rem;color:rgba(255,255,255,.08);margin-top:.6rem;letter-spacing:1px}
+.share-bar{display:flex;gap:10px;justify-content:center;margin-top:1rem;padding:.5rem 0}
+.share-btn{background:rgba(179,136,255,.1);border:1px solid rgba(179,136,255,.2);color:#B388FF;font-size:.75rem;font-weight:700;padding:.6rem 1.4rem;border-radius:12px;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;gap:6px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.share-btn:active{transform:scale(.95);background:rgba(179,136,255,.2)}
+.share-status{text-align:center;font-size:.55rem;color:rgba(179,136,255,.4);margin-top:.4rem;min-height:1.2em}
+.share-hint{text-align:center;font-size:.5rem;color:rgba(179,136,255,.12);margin-top:auto;padding-top:.5rem;letter-spacing:.5px}
+.fallback-img{width:100%;border-radius:12px;margin-top:.5rem;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:2rem}
+.empty-emoji{font-size:3rem;margin-bottom:.8rem;opacity:.4}
+.empty-title{font-size:1.1rem;font-weight:700;color:rgba(179,136,255,.6);margin-bottom:.5rem}
+.empty-desc{font-size:.75rem;color:rgba(255,255,255,.2);line-height:1.6;max-width:260px}
+.drm-wm{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);pointer-events:none}
+.drm-wm span{color:rgba(255,0,0,.6);font-size:2rem;font-weight:900;transform:rotate(-30deg);letter-spacing:4px;text-transform:uppercase}
+.card-bg{background:#0D0B1A}
+@media(min-width:768px){
+  body{background:#0a0a0a;overflow:hidden}
+  .card{max-width:100vw;min-height:100vh}
+  .card-content{max-width:680px;margin:0 auto;padding:3rem 2.5rem;justify-content:center}
+  .card-emoji{font-size:4rem;margin-bottom:.4rem}
+  .card-subtitle{font-size:.75rem;letter-spacing:5px;margin-bottom:.25rem}
+  .card-title{font-size:2.2rem;margin-bottom:.4rem}
+  .card-rank{font-size:.85rem;margin-bottom:1.8rem}
+  .tea-row{padding:1rem 1.3rem;margin-bottom:.7rem;border-radius:14px}
+  .tea-label{font-size:.65rem;letter-spacing:2px;margin-bottom:.3rem}
+  .tea-text{font-size:1.2rem;line-height:1.5}
+  .tea-meta{font-size:.75rem;margin-top:.2rem}
+  .wotd-row{padding:1rem 1.3rem;border-radius:14px}
+  .wotd-word{font-size:1.8rem}
+  .chaos-meter{font-size:1.8rem}
+  .share-hint{font-size:.6rem}
+}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="card-bg" id="cardBg"></div>
+  <div class="card-overlay" id="cardOverlay"></div>
+  <div class="card-content" id="cardContent"></div>
+</div>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('keydown',function(e){if((e.ctrlKey&&(e.key==='u'||e.key==='s'))||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||e.key==='F12')e.preventDefault();});
+document.addEventListener('copy',function(e){e.preventDefault();});
+(function(){var h=location.hostname;var a=['narulife.github.io','janmilansantos.github.io','localhost','127.0.0.1',''];var ok=false;for(var i=0;i<a.length;i++)if(h===a[i]||h.indexOf(a[i])!==-1)ok=true;if(!ok){var k='_stg_fc';var f=localStorage.getItem(k);if(!f){localStorage.setItem(k,Date.now());f=Date.now();}if((Date.now()-parseInt(f))/864e5>14){document.documentElement.style.filter='saturate(0.2) brightness(0.6)';var w=document.createElement('div');w.className='drm-wm';w.innerHTML='<span>UNLICENSED COPY</span>';document.body.appendChild(w);}}})();
+
+var _x=JSON.parse(atob('eyJjb21ib3MiOnsiTmV3YmllIjp7IjEiOlsiQmFieSBTdGVwcyBDYWxtIFZpYmVzIiwiZXZlcnkgam91cm5leSBiZWdpbnMgd2l0aCBhIHF1aWV0IGZpcnN0IGxvZyJdLCIyIjpbIk5ldyBIZXJlIEFscmVhZHkgQ2hhb3RpYyIsImRheSBvbmUgZW5lcmd5IHdpdGggb3ZlcnNoYXJpbmciXSwiMyI6WyJGcmVzaG1hbiBGcmVuenkiLCJqdXN0IGFycml2ZWQgbWFraW5nIGRhdGEgaW50ZXJlc3RpbmciXSwiNCI6WyJEYXkgT25lIEFscmVhZHkgVW5oaW5nZWQiLCJtb3N0IHBlb3BsZSBlYXNlIGluIG5vdCB5b3UgcXVlZW4iXSwiNSI6WyJGZXJhbCBGcmVzaG1hbiBFbmVyZ3kiLCJ6ZXJvIFhQIG1heGltdW0gY2hhb3MgbGVnZW5kYXJ5Il19LCJSaXNpbmciOnsiMSI6WyJTdGVhZHkgR2xvdyBObyBSdXNoIiwiYnVpbGRpbmcgbW9tZW50dW0gbGlrZSBhIHF1ZWVuIl0sIjIiOlsiR2xvdyBVcCBBaGVhZCBvZiBTY2hlZHVsZSIsInRyYW5zZm9ybWF0aW9uIGNvbWluZyBob3QgYW5kIG1lc3N5Il0sIjMiOlsiR2xvd2luZyBUaHJvdWdoIENoYW9zIiwiZ3Jvd3RoIGRvZXNudCBhbHdheXMgbG9vayBwcmV0dHkgYnV0IGFsd2F5cyByZWFsIl0sIjQiOlsiVW5oaW5nZWQgR2xvdyBVcCBBcmMiLCJsZXZlbGluZyB1cCB6ZXJvIGZpbHRlciBmdWxsIGNvbW1pdG1lbnQiXSwiNSI6WyJGdWxsIEZlcmFsIFRyYW5zZm9ybWF0aW9uIiwiZ2xvdyB1cCB2aW9sZW50IGFuZCBiZWF1dGlmdWwiXX0sIlBybyI6eyIxIjpbIkNhbG0gTWFpbiBDaGFyYWN0ZXIiLCJzaGUgd2Fsa3MgaW4gdGhlIHJvb20gYWRqdXN0cyJdLCIyIjpbIlBsb3QgVGhpY2tlbmluZyBHcmFjZWZ1bGx5Iiwic3RvcnkgZ2V0dGluZyBpbnRlcmVzdGluZyBzaGUga25vd3MiXSwiMyI6WyJTY3JpcHQgR2V0dGluZyBTcGljeSIsIm1haW4gY2hhcmFjdGVyIHdpdGggdW5leHBlY3RlZCB0d2lzdHMiXSwiNCI6WyJHb2VzIE9mZiBTY3JpcHQiLCJ3aG8gbmVlZHMgYSBwbGFuIHdpdGggbW9tZW50dW0gYW5kIGF1ZGFjaXR5Il0sIjUiOlsiTWFpbiBDaGFyYWN0ZXIgVmlsbGFpbiBBcmMiLCJwcm90YWdvbmlzdCBzbmFwcGVkIGhvbmVzdGx5IGljb25pYyJdfSwiTWFzdGVyIjp7IjEiOlsiQ29tcG9zZWQgQ3Jvd24gRW5lcmd5IiwicnVsaW5nIHdpdGggZ3JhY2UgZGF0YSBib3dzIGxvZ3MgZmxhd2xlc3MiXSwiMiI6WyJDcm93biBUaWx0ZWQgU3RpbGwgR29vZCIsInNsaWdodCBjaGFvcyBtYXhpbXVtIHN0eWxlIG5vYm9keSBsaWtlIGhlciJdLCIzIjpbIlF1ZWVuIG9mIENvbnRyb2xsZWQgQ2hhb3MiLCJzaGUgb3JjaGVzdHJhdGVzIHRoZSBtYWRuZXNzIGdpdmluZyBjb25kdWN0b3IiXSwiNCI6WyJPZmYtU2NyaXB0IFJveWFsdHkiLCJ0aHJldyBhd2F5IHBsYXlib29rIHdyb3RlIGJldHRlciBvbmUiXSwiNSI6WyJVbmhpbmdlZCBSb3lhbHR5IiwiY3Jvd24gY3Jvb2tlZCBlbmVyZ3kgZmVyYWwgdGhyb25lIGhlcnMiXX0sIkxlZ2VuZCI6eyIxIjpbIlRpbWVsZXNzIEljb24gRW5lcmd5IiwiYmV5b25kIHRyZW5kcyBiZXlvbmQgcGhhc2VzIHNoZSBqdXN0IElTIl0sIjIiOlsiSWNvbiB3aXRoIGFuIEVkZ2UiLCJsZWdlbmRhcnkgd2l0aCBlbm91Z2ggY2hhb3MgdG8gYmUgaW50ZXJlc3RpbmciXSwiMyI6WyJMZWdlbmQgaW4gTW90aW9uIiwic3RpbGwgZ3Jvd2luZyBzdGlsbCBiZXR0ZXIgdGhhbiBleHBlY3RlZCJdLCI0IjpbIlVuaGluZ2VkIExlZ2VuZCBTdGF0dXMiLCJyZWFjaGVkIHRvcCBydWxlcyBubyBsb25nZXIgYXBwbHkiXSwiNSI6WyJGdWxsIEZlcmFsIEljb24gTW9kZSIsIm1heCBYUCBtYXggY2hhb3Mgc2hlIElTIHRoZSBnYW1lIl19fSwibGV2ZWxzIjpbeyJrIjoiTmV3YmllIiwidCI6IkZyZXNoIEZhY2UgRXJhIiwiYiI6IvCfjLEiLCJtbiI6MCwibXgiOjQ5LCJkIjoiSnVzdCBnZXR0aW5nIHN0YXJ0ZWQuIEV2ZXJ5IGxvZyBpcyBhIHN0ZXAuIFRoZSB1bml2ZXJzZSBpcyB3YXRjaGluZyDigJQgc2hvdyBoZXIgd2hhdCB5b3VyZSBtYWRlIG9mLiJ9LHsiayI6IlJpc2luZyIsInQiOiJHbG93IFVwIExvYWRpbmciLCJiIjoi4pyoIiwibW4iOjUwLCJteCI6MTQ5LCJkIjoiVGhlIHRyYW5zZm9ybWF0aW9uIGlzIHVuZGVyd2F5LiBCdWlsZGluZyBoYWJpdHMgdHJhY2tpbmcgZGF5cyB0aGUgZGF0YSB0ZWxscyB5b3VyIHN0b3J5LiBTaGVzIGJlY29taW5nLiJ9LHsiayI6IlBybyIsInQiOiJNYWluIENoYXJhY3RlciBVbmxvY2tlZCIsImIiOiLwn5GRIiwibW4iOjE1MCwibXgiOjI5OSwiZCI6IllvdXZlIHVubG9ja2VkIHRoZSBtYWluIHBsb3QuIExvZ3MgY29uc2lzdGVudCBkYXRhIHJpY2ggdHJhamVjdG9yeSBjbGVhci4gVGhpcyBpcyB5b3VyIGVyYSBiYWJlLiJ9LHsiayI6Ik1hc3RlciIsInQiOiJRdWVlbiBvZiB0aGUgR2FtZSIsImIiOiLwn5KOIiwibW4iOjMwMCwibXgiOjQ5OSwiZCI6Ik1hc3RlcnkgYWNoaWV2ZWQuIENvbnNpc3RlbmN5IGluc3BpcmluZyBkYXRhIHRlbGxzIGdyb3d0aCBldmVyeW9uZSBmZWVscyB0aGUgZW5lcmd5IHNoaWZ0LiJ9LHsiayI6IkxlZ2VuZCIsInQiOiJJY29uIFN0YXR1cyBBY2hpZXZlZCIsImIiOiLwn4+GIiwibW4iOjUwMCwibXgiOjk5OTksImQiOiJMZWdlbmRhcnkuIEEgdGVzdGFtZW50IHRvIGRpc2NpcGxpbmUgZ3Jvd3RoIGFuZCBzaG93aW5nIHVwIGZvciB5b3Vyc2VsZiBldmVyeSBzaW5nbGUgZGF5LiBTaGUgZGlkIFRIQVQuIn1dfQ=='));
+var _co=_x.combos;var _lv=_x.levels;
+
+var _cn={1:'Calm Queen',2:'Controlled Chaos',3:'Vibes Are Shifting',4:'Unhinged but Accurate',5:'Full Feral Mode'};
+var _ce={1:'\uD83E\uDEB7',2:'\uD83C\uDF38\uD83C\uDF38',3:'\u2615\u2615\u2615',4:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25',5:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25\uD83E\uDEE0'};
+
+// Word of the day pools by level tier
+var _w={Newbie:['beginning','spark','potential','first step','curiosity','wonder','new chapter','genesis','awakening','seedling'],Rising:['momentum','growth','bloom','becoming','unfolding','rising','glow','building','shifting','evolving'],Pro:['confidence','purpose','clarity','strength','presence','power','intention','mastery','focus','command'],Master:['sovereignty','excellence','grace','dominion','legacy','wisdom','authority','brilliance','reign','influence'],Legend:['icon','immortal','timeless','transcendent','legendary','eternal','infinite','divine','mythic','untouchable']};
+
+function getLevel(xp){for(var i=_lv.length-1;i>=0;i--)if(xp>=_lv[i].mn)return _lv[i];return _lv[0];}
+
+var P=new URLSearchParams(location.search);
+var xp=parseInt(P.get('xp'));
+var chaos=parseInt(P.get('chaos'));
+var content=document.getElementById('cardContent');
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+if(isNaN(xp)||chaos<1||chaos>5){
+  document.getElementById('cardBg').className='card-bg chaos-bg-2';
+  document.getElementById('cardOverlay').style.background='linear-gradient(180deg,rgba(13,11,26,.75) 0%,rgba(13,11,26,.92) 100%)';
+  content.innerHTML='<div class="empty"><div class="empty-emoji">\u2728</div><div class="empty-title">Use Your Beta Tracker</div><div class="empty-desc">This card is generated from your XP and activity logs.<br><br>Open your Student OS sheet to log your day and see your personalized XP Card.</div></div>';
+}else{
+  var level=getLevel(xp);
+  var combo=_co[level.k]&&_co[level.k][chaos];
+  if(!combo)combo=[level.t,'keep going queen'];
+  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||window.innerWidth<768;
+
+  // Dynamic gradient — seeded from xp+chaos+level
+  var seed=xp*31+chaos*127+level.mn*13;seed=Math.abs(seed);
+  var ang=(seed%360);var ang2=((seed*7)%360);
+  var hues=[[179,136,255],[124,77,255],[150,100,220],[100,80,200],[200,160,255],[160,120,240]];
+  var h1=hues[seed%hues.length];var h2=hues[(seed*3+1)%hues.length];
+  var intensity=chaos*.07;var i2=chaos*.04;
+  var pos1=(seed%30)+20;var pos2=((seed*5)%30)+55;
+  var radX=(seed%60)+20;var radY=((seed*3)%60)+20;
+  var bgEl=document.getElementById('cardBg');
+  if(chaos>=4){
+    bgEl.style.background='radial-gradient(ellipse at '+radX+'% '+radY+'%,rgba('+h1+','+intensity+'),transparent 50%),radial-gradient(circle at '+(100-radX)+'% '+(100-radY)+'%,rgba('+h2+','+i2+'),transparent 40%),linear-gradient('+ang+'deg,#0D0B1A,rgba('+h1+','+(intensity*.6)+') '+pos1+'%,#0D0B1A '+pos2+'%,rgba('+h2+','+(i2*.5)+') '+(pos2+20)+'%,#0D0B1A)';
+  }else if(chaos>=3){
+    bgEl.style.background='linear-gradient('+ang+'deg,#0D0B1A,rgba('+h1+','+intensity+') '+pos1+'%,rgba('+h2+','+i2+') '+pos2+'%,#0D0B1A)';
+  }else{
+    bgEl.style.background='linear-gradient('+ang+'deg,#0D0B1A 0%,rgba('+h1+','+(intensity*.5)+') '+pos1+'%,#0D0B1A 100%)';
+  }
+  var op=isMobile?[0,.92,.88,.84,.78,.70]:[0,.88,.82,.76,.68,.58];
+  document.getElementById('cardOverlay').style.background='linear-gradient('+ang2+'deg,rgba(13,11,26,'+(op[chaos]-.18)+') 0%,rgba(13,11,26,'+op[chaos]+') 40%,rgba(13,11,26,'+(op[chaos]+.02)+') 100%)';
+
+  // XP bar — no cap for Legend; bar shows progress within current tier (or continuous for Legend)
+  var pct;
+  var nextLevel=null;
+  for(var i=0;i<_lv.length;i++){if(_lv[i].mn>xp){nextLevel=_lv[i];break;}}
+  if(nextLevel){
+    pct=Math.min(100,Math.round(((xp-level.mn)/(nextLevel.mn-level.mn))*100));
+  }else{
+    // Legend — no cap, bar fills based on multiples of 500
+    pct=Math.min(100,Math.round(((xp-500)/500)*100));
+  }
+
+  // Word of the day — rotate by day + xp hash
+  var doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
+  var pool=_w[level.k]||_w.Newbie;
+  var wotd=pool[(doy+xp+chaos)%pool.length];
+
+  var h='';
+  h+='<div class="card-emoji">\u2728</div>';
+  h+='<div class="card-subtitle">student os beta \u00B7 xp card</div>';
+  h+='<div class="card-title">'+esc(combo[0])+'</div>';
+  h+='<div class="card-rank">'+esc(level.t)+'</div>';
+
+  h+='<div class="tea-row"><div class="tea-label">Experience Points</div><div class="tea-text">'+xp+' XP</div>';
+  h+='<div class="xp-bar"><div class="xp-fill" style="width:'+pct+'%"></div></div>';
+  if(nextLevel)h+='<div class="tea-meta">'+(nextLevel.mn-xp)+' XP to '+esc(nextLevel.t)+'</div>';
+  else h+='<div class="tea-meta">'+xp+' XP \u00B7 beyond legendary</div>';
+  h+='</div>';
+
+  h+='<div class="tea-row" style="border-color:rgba(179,136,255,.18);background:rgba(179,136,255,.06)"><div class="tea-label" style="color:rgba(179,136,255,.5)">The Vibe</div><div class="tea-text">'+esc(combo[1])+'</div></div>';
+
+  h+='<div class="wotd-row"><div class="wotd-label">word of the day</div><div class="wotd-word">'+esc(wotd)+'</div></div>';
+
+  h+='<div class="chaos-section"><div class="chaos-label">chaos level</div><div class="chaos-meter">'+(_ce[chaos]||'\u2615\u2615\u2615')+'</div><div class="chaos-verdict">'+esc(_cn[chaos]||'')+'</div>';
+  h+='<div class="hashtags">#StudentOS #XPCard #'+esc(level.k)+'Era</div></div>';
+
+  h+='<div class="watermark">STUDENT OS BETA &middot; XP CARD</div>';
+  h+='<div class="share-bar"><button class="share-btn" id="btnShare">Share</button></div>';
+  h+='<div class="share-status" id="shareStatus"></div>';
+  h+='<div id="fallbackContainer"></div>';
+  if(isMobile)h+='<div class="share-hint">share your xp card</div>';
+  else h+='<div class="share-hint">use directly on your phone</div>';
+  content.innerHTML=h;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+(function(){var card=document.getElementById('card'),btn=document.getElementById('btnShare'),st=document.getElementById('shareStatus'),fb=document.getElementById('fallbackContainer');if(!card||!btn)return;function ss(m){if(st){st.textContent=m;setTimeout(function(){st.textContent='';},4000);}}function cap(){ss('Rendering...');var h=['.share-bar','.share-status','.share-hint','#fallbackContainer'];h.forEach(function(s){var e=document.querySelector(s);if(e)e.style.display='none';});return htmlToImage.toBlob(card,{pixelRatio:3,backgroundColor:'#0a0a0a',width:card.scrollWidth,height:card.scrollHeight,style:{borderRadius:'0'}}).finally(function(){h.forEach(function(s){var e=document.querySelector(s);if(e)e.style.display='';});});}btn.addEventListener('click',function(){cap().then(function(b){var f=new File([b],'xp-card.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f]}).then(function(){ss('Shared!');});if(navigator.share)return navigator.share({url:location.href}).then(function(){ss('Link shared!');});var u=URL.createObjectURL(b);fb.innerHTML='<img src="'+u+'" class="fallback-img"><div style="text-align:center;font-size:.4rem;color:rgba(255,255,255,.1);margin-top:.2rem">Long-press to save</div>';ss('Long-press the image to save');}).catch(function(e){if(e.name==='AbortError')return;cap().then(function(b){fb.innerHTML='<img src="'+URL.createObjectURL(b)+'" class="fallback-img">';ss('Long-press to save');});});});})();
+</script>
+</body>
+</html>
