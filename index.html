@@ -299,26 +299,19 @@ if (!hasData) {
 
   html += '<div class="watermark">SHE\'S THAT GIRL &middot; ' + (isSpill ? 'THE SPILL' : 'THE TEA') + '</div>';
 
+  // Share button + fallback container
+  var btnClass = isSpill ? 'share-btn spill' : 'share-btn';
+  html += '<div class="share-bar"><button class="' + btnClass + '" id="btnShare">Share</button></div>';
+  html += '<div class="share-status" id="shareStatus"></div>';
+  html += '<div id="fallbackContainer"></div>';
+
   if (isMobile) html += '<div class="share-hint">share your tea</div>';
-  else if (isDesktop) html += '<div class="share-hint">open on your phone for the perfect screenshot</div>';
+  else if (isDesktop) html += '<div class="share-hint">use directly on your phone</div>';
 
   content.innerHTML = html;
 }
 
 function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-// ═══════════════════════════════════════════════════════
-// SHARE — single button (mobile) + long-press fallback
-// ═══════════════════════════════════════════════════════
-if (hasData) {
-  var btnClass = isSpill ? 'share-btn spill' : 'share-btn';
-  var shareHtml = '<div class="share-bar">';
-  shareHtml += '<button class="' + btnClass + '" id="btnShare">Share</button>';
-  shareHtml += '</div>';
-  shareHtml += '<div class="share-status" id="shareStatus"></div>';
-  shareHtml += '<div id="fallbackContainer"></div>';
-  content.insertAdjacentHTML('beforeend', shareHtml);
-}
 </script>
 
 <!-- html-to-image -->
